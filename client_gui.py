@@ -17,7 +17,7 @@ class ChatClient:
         self.page.window_height = 650
         self.sock = None
         self.nickname = ""
-        self.running = False # Flag per gestire i thread
+        self.running = False 
 
         # --- UI LOGIN ---
         self.txt_nickname = ft.TextField(
@@ -37,7 +37,6 @@ class ChatClient:
             alignment=ft.alignment.center, expand=True
         )
 
-        # --- UI CHAT ---
         self.chat_list = ft.ListView(expand=True, spacing=10, auto_scroll=True, padding=10)
         self.txt_message = ft.TextField(
             hint_text="Messaggio... (usa JOIN <nome> per cambiare stanza)",
@@ -102,7 +101,6 @@ class ChatClient:
                 
                 buffer += data
                 
-                # TCP Streaming fix: processa ogni riga terminata da \n
                 while "\n" in buffer:
                     msg, buffer = buffer.split("\n", 1)
                     if msg.strip():
@@ -111,23 +109,17 @@ class ChatClient:
                 break
 
     def add_message_to_ui(self, msg):
-        # Determina stile (Mio vs Altri vs Server)
         is_me = msg.startswith(f"{self.nickname}:") or msg.startswith(f"[{self.nickname}]")
         is_server = "SERVER:" in msg or "Benvenuto" in msg or "⚠️" in msg
         
         align = ft.MainAxisAlignment.END if is_me else ft.MainAxisAlignment.START
-        
-        # --- COLORI PER TEMA SCURO ---
+
         if is_me:
-            # Tuoi messaggi: Blu scuro/Petrolio
             bg = ft.Colors.BLUE_900 
-            # Non impostiamo il colore del testo, così diventa bianco in automatico
-        elif is_server:
-            # Server: Arancione scuro
+        elif is_server:uro
             bg = ft.Colors.ORANGE_900
             align = ft.MainAxisAlignment.CENTER
         else:
-            # Altri: Grigio scuro
             bg = ft.Colors.GREY_800
 
         bubble = ft.Row([
@@ -147,20 +139,12 @@ class ChatClient:
         if not text: return
 
         try:
-            # 1. Invia il messaggio al server (così lo vedono gli altri)
             self.sock.sendall(text.encode('utf-8'))
-            
-            # 2. MOSTRA IL MESSAGGIO A SCHERMO (Fix per il tuo problema)
-            # Se non è un comando speciale (come EXIT), aggiungilo alla tua lista
             if text.upper() != "EXIT":
                 self.add_message_to_ui(f"{self.nickname}: {text}")
-
-            # 3. Pulisci la casella di testo
             self.txt_message.value = ""
             self.txt_message.focus()
             self.page.update()
-
-            # Gestione uscita
             if text.upper() == "EXIT":
                 self.running = False
                 self.sock.close()
@@ -172,4 +156,5 @@ def main(page: ft.Page):
     client = ChatClient(page)
 
 if __name__ == "__main__":
+
     ft.app(target=main)
