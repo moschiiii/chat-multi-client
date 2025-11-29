@@ -116,7 +116,7 @@ class ChatClient:
 
         if is_me:
             bg = ft.Colors.BLUE_900 
-        elif is_server:uro
+        elif is_server:
             bg = ft.Colors.ORANGE_900
             align = ft.MainAxisAlignment.CENTER
         else:
