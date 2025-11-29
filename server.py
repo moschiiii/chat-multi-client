@@ -50,7 +50,6 @@ def join_channel(sock, new_channel):
         if nick in channels[new_channel]["banned"]:
             send(sock, f"SERVER: Accesso negato. Sei BANNATO da '{new_channel}'.")
             return 
-    # ----------------------------------------------
 
     # 1. Esce dal vecchio canale (se presente)
     leave_channel(sock)
@@ -152,7 +151,7 @@ def handle_client(sock, addr):
                     else:
                         target_sock = find_socket(target_name)
                         if target_sock and target_sock in channels[chan]["members"]:
-                            channels[chan]["banned"].add(target_name)i
+                            channels[chan]["banned"].add(target_name)
                             broadcast(chan, f"⚠️ {target_name} è stato BANNATO da {nick}.")
                             send(target_sock, f"SEI STATO BANNATO DAL CANALE '{chan}'.")
                             leave_channel(target_sock)
@@ -172,7 +171,7 @@ def handle_client(sock, addr):
                 else: broadcast(chan, f"[{chan}] {nick}: {msg}", exclude=sock)
 
         except Exception: break
--
+
     with lock:
         if sock in clients:
             leave_channel(sock)
